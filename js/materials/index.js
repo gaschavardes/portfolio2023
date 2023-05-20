@@ -4,6 +4,8 @@ import { glslifyStrip } from '../utils'
 import defaultVert from '../../glsl/includes/default/vert.glsl'
 import defaultFrag from '../../glsl/includes/default/frag.glsl'
 import normalsVert from '../../glsl/includes/normals/vert.glsl'
+import BackFaceMaterial from './backface/BackFaceMaterial'
+import GlassMaterial from './glass/GlassMaterial'
 
 // materials
 import BasicMaterial from './basic/BasicMaterial'
@@ -18,5 +20,7 @@ function setupShaderChunks() {
 export {
 	setupShaderChunks,
 	BasicMaterial,
-	TestMaterial
+	TestMaterial,
+	BackFaceMaterial,
+	GlassMaterial
 }

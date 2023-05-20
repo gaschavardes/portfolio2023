@@ -1,6 +1,7 @@
-import { Color, PerspectiveCamera, CameraHelper, Scene, AmbientLight, SpotLight, GridHelper } from 'three'
+import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, PlaneGeometry, MeshBasicMaterial, Mesh, WebGLRenderTarget, Scene, AmbientLight, SpotLight, GridHelper } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import DummyComponent from '../components/DummyComponent'
+import Background from '../components/Background'
+import Name from '../components/Name'
 import store from '../store'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
@@ -9,6 +10,7 @@ export default class MainScene extends Scene {
 	constructor() {
 		super()
 
+		store.MainScene = this
 		this.options = {
 			controls: window.urlParams.has('controls')
 		}
@@ -16,6 +18,18 @@ export default class MainScene extends Scene {
 		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 0.1, 50)
 		this.camera.position.z = 10
 		this.add(this.camera)
+
+
+		this.orthoCamera = new OrthographicCamera(
+			store.window.w / -2,
+			store.window.w / 2,
+			store.window.h / 2,
+			store.window.h / -2,
+			1,
+			1000
+		)
+		this.orthoCamera.position.z = 5
+		this.orthoCamera.layers.set(1)
 
 		/* Debug tools */
 		this.cameraHelper = new CameraHelper(this.camera)
@@ -37,12 +51,15 @@ export default class MainScene extends Scene {
 
 		/* Add scene components */
 		this.components = {
-			dummy: new DummyComponent()
+
+			// dummy: new DummyComponent(),
+			name: new Name()
 		}
 
 		this.load()
 
 		E.on('App:start', () => {
+			this.createFbo()
 			this.build()
 			this.addEvents()
 		})
@@ -56,6 +73,24 @@ export default class MainScene extends Scene {
 			this.components[key].build(this.objectData)
 			this.add(this.components[key])
 		}
+	}
+
+	createFbo() {
+		store.envFbo = new WebGLRenderTarget(
+			store.window.w * store.window.dpr,
+			store.window.h * store.window.dpr
+		)
+		this.bgGeometry = new PlaneGeometry()
+		this.bgMaterial = new MeshBasicMaterial({ map: this.backgroundTexture })
+		this.bgMesh = new Mesh(this.bgGeometry, this.bgMaterial)
+		this.bgMesh.position.set(0, 0, -5)
+
+		const image = this.backgroundTexture.image
+		this.bgMesh.scale.set(store.window.h * 1 * image.naturalWidth / image.naturalHeight, store.window.h * 1, 1)
+		this.bgMesh.scale.set(30, 30, 1)
+		// this.bgMesh.layers.set(1)
+		this.add(this.bgMesh)
+		E.emit('fboCreated')
 	}
 
 	buildDebugEnvironment() {
@@ -79,6 +114,10 @@ export default class MainScene extends Scene {
 	}
 
 	onRaf = () => {
+		// store.WebGL.renderer.setRenderTarget(store.envFbo)
+		// store.WebGL.renderer.render(this, this.camera)
+		// store.WebGL.renderer.setRenderTarget(null)
+		// store.WebGL.renderer.render(this, this.camera)
 		this.controls.enabled && this.controls.update()
 
 		if (this.controls.enabled) {
@@ -100,6 +139,10 @@ export default class MainScene extends Scene {
 			textures: {},
 			models: {}
 		}
+
+		store.AssetLoader.loadTexture('/textures/background.jpeg').then(texture => {
+			this.backgroundTexture = texture
+		})
 
 		// Load .unseen file
 		// store.AssetLoader.loadJson('./objectdata.unseen').then(data => {

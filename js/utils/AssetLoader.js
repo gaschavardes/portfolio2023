@@ -3,6 +3,7 @@ import { E } from './'
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { TextureLoader } from 'three'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 /**
 *   Add any promises that need to be resolved before showing
@@ -18,10 +19,12 @@ export default class AssetLoader {
 
 		this.jsons = {}
 		this.gltfs = {}
+		this.fbxs = {}
 		this.textures = {}
 
 		this.textureLoader = new TextureLoader()
 		this.gltfLoader = new GLTFLoader()
+		this.fbxLoader = new FBXLoader()
 	}
 
 	load = ({ element = document.body, progress = true } = {}) => {
@@ -54,6 +57,9 @@ export default class AssetLoader {
 
 	progressCallback = (percentLoaded) => {
 		E.emit(this.progressEventName, { percent: Math.ceil(percentLoaded) })
+		if (percentLoaded === 100) {
+			E.emit('PageLoaded')
+		}
 	}
 
 	add = (promise) => {
@@ -150,6 +156,18 @@ export default class AssetLoader {
 		}
 
 		return this.gltfs[url]
+	}
+
+	loadFbx = (url) => {
+		if (!this.fbxs[url]) {
+			this.fbxs[url] = this.add(new Promise((resolve, reject) => {
+				this.fbxLoader.load(url, fbx => {
+					resolve(fbx)
+				}, undefined, reject)
+			}))
+		}
+
+		return this.fbxs[url]
 	}
 
 	loadTexture = (url, options) => {

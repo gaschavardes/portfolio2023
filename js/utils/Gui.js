@@ -33,17 +33,6 @@ export class Gui extends Pane {
 		this.addSceneStats()
 		this.addInput(this.options, 'syncGuiValues')
 		this.addCamera()
-
-		this.initTorus()
-	}
-
-	initTorus() {
-		const folder = this.addFolder({ title: 'torus', expanded: false })
-		this.options.torus = {
-			position: store.MainScene.components.dummy.position
-		}
-		folder.addInput(this.options.torus, 'position')
-		this.addColor(folder, store.MainScene.components.dummy.globalUniforms.uColor, 'value', 'uColor', true)
 	}
 
 	addCamera() {
