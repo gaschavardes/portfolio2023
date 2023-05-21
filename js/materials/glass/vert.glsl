@@ -91,16 +91,17 @@ void main() {
 		pos += center;
 	}
 
-	// pos.z += translatePos.z + uMouse.y - easeInBack(appearProgress(uAppear)) * 50.;
-	// pos.z -= letterCenter.x;
-	// pos.x -= letterCenter.y;
-	// pos.y -= letterCenter.z;
+	pos.z -= letterCenter.z;
+	pos.x -= letterCenter.x;
+	pos.y -= letterCenter.y;
 
-	
-	// pos = rotate(pos, vec3(0., 1., 0.), appearProgress(uAppear));
+	pos = rotate(pos, vec3(0., 1., 0.), appearProgress(uAppear));
 
+	pos.z += letterCenter.z;
+	pos.x += letterCenter.x;
+	pos.y += letterCenter.y;
 
-	pos.z += translatePos.z + uMouse.y;
+	pos.z += translatePos.z + uMouse.y - easeInBack(appearProgress(uAppear)) * 50.;
 	pos.x += translatePos.x + uMouse.x;
 	pos.y += translatePos.y + uMouse.x;
 

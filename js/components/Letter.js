@@ -44,11 +44,17 @@ export default class Letter extends Group {
 		this.item = new Mesh(new BufferGeometry(), this.GlassMaterial)
 		this.fullItem = new Mesh(this.assets.models.v.geometry.clone(), this.backfaceMaterial)
 		this.drawPieces()
+		// this.drawBack()
 		// this.item.rotation.x = -Math.PI * 0.5
 		// this.fullItem.rotation.x = -Math.PI * 0.5
 		this.add(this.item)
 		this.add(this.fullItem)
 		// this.fullItem.layers.set(1)
+	}
+
+	drawBack() {
+		// const position = []
+		// const letterCenter = []
 	}
 
 	drawPieces() {
@@ -177,7 +183,8 @@ export default class Letter extends Group {
 			duration: 2,
 			ease: 'power1.easeInOut',
 			onUpdate: () => {
-				this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
+				// this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
+
 				// this.backfaceMaterial.uniforms.uProgress.value = this.explodeProgress
 			}
 		})
@@ -231,6 +238,8 @@ export default class Letter extends Group {
 		// 	}
 		// })
 		this.item.geometry.getAttribute('progress').needsUpdate = true
+
+		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
 		this.fullItem.visible = true
 
