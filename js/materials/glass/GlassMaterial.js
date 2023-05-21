@@ -15,6 +15,7 @@ export default class GlassMaterial extends ShaderMaterial {
 				backfaceMapBroken: { value: options.backfaceMapBroken },
 				backfaceMap: { value: options.backfaceMap },
 				normalMap: { value: options.normalMap },
+				uAppear: { value: 0 },
 				uTime: { value: 0 },
 				uProgress: { value: 0 },
 				uBackfaceTest: { value: 0 },

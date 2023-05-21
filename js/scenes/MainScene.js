@@ -1,7 +1,8 @@
 import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, PlaneGeometry, MeshBasicMaterial, Mesh, WebGLRenderTarget, Scene, AmbientLight, SpotLight, GridHelper } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Background from '../components/Background'
-import Name from '../components/Name'
+import Hello from '../components/Hello'
+import Letter from '../components/Letter'
 import store from '../store'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
@@ -16,7 +17,7 @@ export default class MainScene extends Scene {
 		}
 
 		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 0.1, 50)
-		this.camera.position.z = 10
+		this.camera.position.z = 15
 		this.add(this.camera)
 
 
@@ -30,6 +31,8 @@ export default class MainScene extends Scene {
 		)
 		this.orthoCamera.position.z = 5
 		this.orthoCamera.layers.set(1)
+
+		this.activeCamera = this.camera
 
 		/* Debug tools */
 		this.cameraHelper = new CameraHelper(this.camera)
@@ -53,7 +56,7 @@ export default class MainScene extends Scene {
 		this.components = {
 
 			// dummy: new DummyComponent(),
-			name: new Name()
+			letter: new Letter()
 		}
 
 		this.load()
@@ -122,8 +125,10 @@ export default class MainScene extends Scene {
 
 		if (this.controls.enabled) {
 			store.WebGL.renderer.render(this, this.devCamera)
+			this.activeCamera = this.devCamera
 		} else {
 			store.WebGL.renderer.render(this, this.camera)
+			this.activeCamera = this.camera
 		}
 
 		store.Gui && store.Gui.refresh(false)

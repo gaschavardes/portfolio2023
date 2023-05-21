@@ -8,13 +8,31 @@ attribute float index;
 attribute vec3 center;
 attribute vec3 random;
 attribute float progress;
+attribute float letter;
+attribute vec3 letterCenter;
 uniform float uProgress;
 uniform float uStartingTime;
 uniform float uTime;
 uniform vec2 resolution;
+uniform float uAppear;
 uniform vec2 uMouse;
 varying vec3 vReflect;
 varying float vBackface;
+
+float easeInQuart(float x) {
+return x * x * x * x;
+}
+
+float easeInBack(float x) {
+float c1 = 1.70158;
+float c3 = c1 + 1.;
+
+return c3 * x * x * x - c1 * x * x;
+}
+
+float appearProgress(float x) {
+	return clamp(x - (letter - letter * 0.9), 0., 1.);
+}
 
 mat4 rotationMatrix(vec3 axis, float angle)
 {
@@ -57,7 +75,7 @@ void main() {
     transformedNormal = normalMatrix*transformedNormal;
 
 	vec3 translatePos = vec3(0.);
-	translatePos.z += random.z * clamp(sign(center.z + 2.) * random.z, -1., 1.) * progress * 6. + sin(uTime - uStartingTime) * progress * clamp(random.z - 10., -.1, .1);
+	translatePos.z += random.z * clamp(sign(center.z + 2.) * random.z, -1., 1.) * progress * 6. + sin(uTime - uStartingTime) * progress * clamp(random.z - 10., -.1, .1) ;
 	translatePos.x += (random.x ) * sin(sign(center.x) * random.x ) * progress * 10. + sin(uTime - uStartingTime) * progress * clamp(random.z - 10., -.1, .1);
 	translatePos.y += (random.y ) * cos(sign(center.y) * random.y ) * progress * 10. + sin(uTime - uStartingTime) * progress * clamp(random.z - 10., -.1, .1);
 
@@ -73,9 +91,21 @@ void main() {
 		pos += center;
 	}
 
+	// pos.z += translatePos.z + uMouse.y - easeInBack(appearProgress(uAppear)) * 50.;
+	// pos.z -= letterCenter.x;
+	// pos.x -= letterCenter.y;
+	// pos.y -= letterCenter.z;
+
+	
+	// pos = rotate(pos, vec3(0., 1., 0.), appearProgress(uAppear));
+
+
 	pos.z += translatePos.z + uMouse.y;
 	pos.x += translatePos.x + uMouse.x;
 	pos.y += translatePos.y + uMouse.x;
+
+	
+
 
 	vec4 worldPosition = modelMatrix * vec4( pos, 1.0);
 
