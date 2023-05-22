@@ -12,7 +12,8 @@ export default class BackFaceMaterial extends ShaderMaterial {
 			uniforms: {
 				uTime: { value: 0 },
 				uProgress: { value: 0 },
-				uStartingTime: { value: 0 }
+				uStartingTime: { value: 0 },
+				uAppear: { value: 0 }
 			}
 		})
 	}
